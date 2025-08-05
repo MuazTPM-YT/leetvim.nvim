@@ -36,7 +36,7 @@ return {
         filename_pattern = "{number:03d}-{slug}.{ext}",
         include_test_stub = true,
         default_language = "python",
-        create_subdirs = true,
+        create_subdirs = false,
       })
     end,
   },
