@@ -40,7 +40,8 @@ return {
       })
     end,
   },
-}```
+}
+```
 
 ### Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
