@@ -10,10 +10,8 @@ leetvim.nvim streamlines your Leetcode workflow by fetching problem templates fr
 
 ## ✨ Features
 
-- **🎯 Instant Templates**: Fetch any Leetcode problem with a single command
+- **🎨 Clean Templates**: Fetches any Leetcode problem templates along with simple test stubs
 - **🔐 Secure Authentication**: Uses your Leetcode session cookie for seamless access
-- **🎨 Clean Templates**: Minimal, distraction-free code templates with simple test stubs
-- **⚡ Blazing Fast**: Lightweight and optimized for speed
 - **🔧 Extensible**: Easy to add support for new programming languages
 
 ---
