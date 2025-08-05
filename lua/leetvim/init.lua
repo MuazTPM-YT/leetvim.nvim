@@ -75,7 +75,7 @@ function M.setup_auth()
 				config.set_cookie(cookie)
 				vim.notify("Cookie saved successfully")
 			else
-				local cookie_path = vim.fn.stdpath("data") .. "/leetcode-template/cookie.txt"
+				local cookie_path = vim.fn.stdpath("data") .. "/leetvim/cookie.txt"
 				vim.fn.mkdir(vim.fn.fnamemodify(cookie_path, ":h"), "p")
 
 				local file = io.open(cookie_path, "w")

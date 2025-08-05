@@ -72,8 +72,6 @@ First, get your LeetCode session cookie:
 :LeetvimTemplate python 1
 ```
 
-This creates a file like `001-two-sum.py` with:
-
 ```
 class Solution(object):
     def twoSum(self, nums, target):
