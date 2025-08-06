@@ -12,7 +12,6 @@ local default_config = {
 	default_language = "python",
 	language_extensions = {
 		python = "py",
-		javascript = "js",
 		java = "java",
 		cpp = "cpp",
 	},
