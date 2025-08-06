@@ -11,6 +11,7 @@ end
 function M.generate_test_stub(problem_data, examples)
 	local func_name = M.extract_function_name(problem_data.codeSnippets)
 	local params = M.extract_function_params(problem_data.codeSnippets)
+
 	local lines = {
 		'if __name__ == "__main__":',
 		"    solution = Solution()",
@@ -19,24 +20,25 @@ function M.generate_test_stub(problem_data, examples)
 
 	if #examples > 0 then
 		for i, example in ipairs(examples) do
-			local test_vars = M.parse_test_input(example.input, params)
+			local test_lines = M.parse_example_to_test_lines(example, params, func_name)
 
-			for _, var_line in ipairs(test_vars.assignments) do
-				table.insert(lines, "    " .. var_line)
+			for _, line in ipairs(test_lines) do
+				table.insert(lines, "    " .. line)
 			end
-
-			table.insert(lines, string.format("    print(solution.%s(%s))", func_name, test_vars.call_params))
 
 			if i < #examples then
 				table.insert(lines, "")
 			end
 		end
 	else
-		if #params > 0 then
-			table.insert(lines, string.format("    print(solution.%s(%s))", func_name, table.concat(params, ", ")))
-		else
-			table.insert(lines, string.format("    print(solution.%s())", func_name))
+		local param_placeholder = {}
+		for _, param in ipairs(params) do
+			table.insert(param_placeholder, param)
 		end
+		table.insert(
+			lines,
+			string.format("    print(solution.%s(%s))", func_name, table.concat(param_placeholder, ", "))
+		)
 	end
 
 	return table.concat(lines, "\n")
@@ -61,7 +63,7 @@ function M.extract_function_params(code_snippets)
 			if params_str then
 				local params = {}
 				for param in params_str:gmatch("([^,]+)") do
-					local clean_param = param:match("([%w_]+)"):gsub("%s+", "")
+					local clean_param = vim.trim(param):match("([%w_]+)")
 					if clean_param and clean_param ~= "" then
 						table.insert(params, clean_param)
 					end
@@ -73,52 +75,60 @@ function M.extract_function_params(code_snippets)
 	return {}
 end
 
-function M.parse_test_input(input_str, param_names)
+function M.parse_example_to_test_lines(example, param_names, func_name)
+	local lines = {}
+	local input_str = vim.trim(example.input)
+
+	local input_lines = vim.split(input_str, "\n")
+
 	local assignments = {}
 	local call_params = {}
 
-	input_str = vim.trim(input_str)
+	for i, input_line in ipairs(input_lines) do
+		input_line = vim.trim(input_line)
+		if input_line ~= "" and param_names[i] then
+			local param_name = param_names[i]
+			local value = M.format_input_value(input_line)
 
-	if input_str:find("=") then
-		local lines = vim.split(input_str, "\n")
-		for _, line in ipairs(lines) do
-			line = vim.trim(line)
-			if line ~= "" then
-				local var_name, value = line:match("([%w_]+)%s*=%s*(.+)")
-				if var_name and value then
-					table.insert(assignments, string.format("%s = %s", var_name, value))
-					table.insert(call_params, var_name)
-				end
-			end
-		end
-	else
-		local values = {}
-
-		for value in input_str:gmatch("[^%s]+") do
-			table.insert(values, value)
-		end
-
-		for i, param_name in ipairs(param_names) do
-			if values[i] then
-				local value = values[i]
-				if value:match("^%[.*%]$") then
-					table.insert(assignments, string.format("%s = %s", param_name, value))
-				elseif value:match('^".*"$') then
-					table.insert(assignments, string.format("%s = %s", param_name, value))
-				elseif tonumber(value) then
-					table.insert(assignments, string.format("%s = %s", param_name, value))
-				else
-					table.insert(assignments, string.format('%s = "%s"', param_name, value))
-				end
-				table.insert(call_params, param_name)
-			end
+			table.insert(assignments, string.format("%s = %s", param_name, value))
+			table.insert(call_params, param_name)
 		end
 	end
 
-	return {
-		assignments = assignments,
-		call_params = table.concat(call_params, ", "),
-	}
+	for _, assignment in ipairs(assignments) do
+		table.insert(lines, assignment)
+	end
+
+	local call_str = string.format("print(solution.%s(%s))", func_name, table.concat(call_params, ", "))
+	table.insert(lines, call_str)
+
+	return lines
+end
+
+function M.format_input_value(input_str)
+	input_str = vim.trim(input_str)
+
+	if input_str:match("^%[.*%]$") then
+		return input_str
+	end
+
+	if input_str:match('^".*"$') then
+		return input_str
+	end
+
+	if input_str:match("^%-?%d+%.?%d*$") then
+		return input_str
+	end
+
+	if input_str:lower() == "true" or input_str:lower() == "false" then
+		return input_str:lower():gsub("^%l", string.upper)
+	end
+
+	if not input_str:match("^[%[{]") then
+		return '"' .. input_str .. '"'
+	end
+
+	return input_str
 end
 
 return M
