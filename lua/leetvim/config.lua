@@ -5,13 +5,16 @@ local default_config = {
 	create_subdirs = true,
 	filename_pattern = "{number:03d}-{slug}.{ext}",
 	leetcode_url = "https://leetcode.com",
-	user_agent = "mozilla/5.0 (compatible; leetvim.nvim)",
+	user_agent = "Mozilla/5.0 (compatible; leetvim.nvim)",
 	include_description = true,
 	include_examples = true,
 	include_test_stub = true,
 	default_language = "python",
 	language_extensions = {
 		python = "py",
+		javascript = "js",
+		java = "java",
+		cpp = "cpp",
 	},
 }
 

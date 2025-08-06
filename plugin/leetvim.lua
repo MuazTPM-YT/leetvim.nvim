@@ -22,7 +22,7 @@ vim.api.nvim_create_user_command("LeetvimTemplate", function(opts)
 end, {
 	nargs = "*",
 	complete = function()
-		return { "python" }
+		return { "python", "javascript", "java", "cpp" }
 	end,
 	desc = "Fetch LeetCode problem template",
 })

@@ -152,6 +152,9 @@ require("leetvim").setup({
 
 Currently supported languages:
 - **Python** (`python`)
+- **JavaScript** (`javascript`)
+- **Java** (`java`)
+- **C++** (`cpp`)
 
 Want more languages? Contributions welcome! 🤝
 
